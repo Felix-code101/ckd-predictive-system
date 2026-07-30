@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKD Predict — Clinical Decision Support System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="brand-icon">🩺</span>
+                <span class="brand-name">CKD Predict</span>
+                <span class="brand-badge">Healthcare Practitioner Edition</span>
+            </div>
+            <div class="nav-links">
+                <a href="#hero" class="active">Home</a>
+                <a href="#assessment" id="navAssessmentLink">Clinical Assessment</a>
+                <a href="how-it-works.html">How It Works</a>
+                <a href="#disclaimer">Disclaimer</a>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- App Main Container -->
+    <div class="app-container">
+
+        <!-- LANDING PAGE VIEW -->
+        <div id="landingView">
+
+            <!-- Hero Section -->
+            <section id="hero" class="hero-section">
+                <div class="hero-badge">👨‍⚕️ Clinical AI Decision Support · Random Forest Model</div>
+                <h1 class="hero-title">Chronic Kidney Disease <span class="text-gradient">Predictive System</span></h1>
+                <p class="hero-subtitle">Machine learning risk screening using 14 key clinical biomarkers. Trained on standardized NHANES health data to assist healthcare practitioners in early renal risk stratification.</p>
+
+                <div class="hero-buttons">
+                    <button id="startAssessmentBtn" class="btn-primary-gradient">Launch Practitioner Assessment →</button>
+                    <a href="#disclaimer" class="btn-secondary-outline">Clinical Protocols</a>
+                </div>
+
+                <!-- Stats Counter Row -->
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <span class="stat-num">14</span>
+                        <span class="stat-lbl">BIOMARKERS</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num">~90.6%</span>
+                        <span class="stat-lbl">VALIDATED ACCURACY</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num">0.9416</span>
+                        <span class="stat-lbl">ROC-AUC SCORE</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Demo Row -->
+            <section class="demo-section">
+                <div class="demo-card">
+                    <span class="demo-title">🧪 Quick Case Demo — Pre-fill Test Profiles</span>
+                    <div class="demo-buttons">
+                        <button id="demoCkdBtn" class="btn-demo-ckd">Demo: High Risk Patient</button>
+                        <button id="demoHealthyBtn" class="btn-demo-healthy">Demo: Healthy Patient</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Educational Disclaimer Banner -->
+            <section id="disclaimer" class="disclaimer-section">
+                <div class="disclaimer-card">
+                    <h4>⚠️ Practitioner & Educational Disclaimer</h4>
+                    <p>This Chronic Kidney Disease Prediction System is developed as an <strong>academic decision-support tool</strong> and is intended for <strong>demonstration and educational purposes only</strong>.</p>
+                    <ul>
+                        <li>This system is <strong>NOT</strong> a certified diagnostic medical device.</li>
+                        <li>Model output probability scores should serve as clinical decision support and <strong>NOT</strong> replace professional medical judgment.</li>
+                        <li>Always perform standard diagnostic workups (e.g., eGFR, urine ACR, renal imaging) to confirm clinical diagnoses.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="app-footer">
+                <p>CKD Prediction System — Healthcare Practitioner Decision Support</p>
+                <p class="footer-sub">Dataset: NHANES 2021–2023 | Engine: Random Forest | Framework: FastAPI & Vanilla JS</p>
+                <p class="footer-ver">v1.0</p>
+            </footer>
+        </div>
+
+        <!-- CLINICAL INPUT FORM VIEW -->
+        <div id="formView" class="hidden">
+            <button id="backToLandingBtn" class="btn-back">← Back to Overview</button>
+            <header class="app-header">
+                <div class="header-badge">Healthcare Practitioner Panel</div>
+                <h1>Patient Clinical Screening</h1>
+                <p>Enter patient anthropometrics, vitals, and serum laboratory values.</p>
+            </header>
+
+            <main class="form-card">
+                <form id="ckdForm">
+                    <!-- Section 1: Demographics -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="step-num">1</span>
+                            <h2>Demographics</h2>
+                        </div>
+                        <div class="grid-layout">
+                            <div class="form-group">
+                                <label for="age">Age <span class="unit">(Years)</span></label>
+                                <input type="number" id="age" name="age" min="18" max="120" value="58" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select id="gender" name="gender" required>
+                                    <option value="Male" selected>Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Vitals & Body Metrics -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="step-num">2</span>
+                            <h2>Anthropometrics & Vitals</h2>
+                        </div>
+                        <div class="grid-layout">
+                            <div class="form-group">
+                                <label for="weight_kg">Weight <span class="unit">(kg)</span></label>
+                                <input type="number" step="0.1" id="weight_kg" name="weight_kg" min="30" max="250" value="82.0" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="height_cm">Height <span class="unit">(cm)</span></label>
+                                <input type="number" step="0.1" id="height_cm" name="height_cm" min="100" max="220" value="170.0" required>
+                            </div>
+
+                            <div class="form-group auto-calc">
+                                <label for="bmi">Body Mass Index <span class="unit">(BMI kg/m²)</span></label>
+                                <input type="number" step="0.1" id="bmi" name="bmi" value="28.4" readonly>
+                                <span class="calc-badge">Auto-Calculated</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="bp_systolic">Systolic Blood Pressure <span class="unit">(mmHg)</span></label>
+                                <input type="number" id="bp_systolic" name="bp_systolic" min="60" max="240" value="135" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="bp_diastolic">Diastolic Blood Pressure <span class="unit">(mmHg)</span></label>
+                                <input type="number" id="bp_diastolic" name="bp_diastolic" min="40" max="140" value="85" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Serum Chemistry Panel -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="step-num">3</span>
+                            <h2>Serum Laboratory Panel</h2>
+                        </div>
+                        <div class="grid-layout">
+                            <div class="form-group">
+                                <label for="serum_creatinine">Serum Creatinine <span class="unit">(mg/dL)</span></label>
+                                <input type="number" step="0.01" id="serum_creatinine" name="serum_creatinine" min="0.2" max="15.0" value="1.4" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="blood_urea_nitrogen">Blood Urea Nitrogen (BUN) <span class="unit">(mg/dL)</span></label>
+                                <input type="number" step="0.1" id="blood_urea_nitrogen" name="blood_urea_nitrogen" min="2" max="100" value="22.0" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="albumin_serum">Serum Albumin <span class="unit">(g/dL)</span></label>
+                                <input type="number" step="0.1" id="albumin_serum" name="albumin_serum" min="1.0" max="6.0" value="4.1" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phosphorus">Phosphorus <span class="unit">(mg/dL)</span></label>
+                                <input type="number" step="0.1" id="phosphorus" name="phosphorus" min="1.0" max="10.0" value="3.6" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="bicarbonate">Serum Bicarbonate <span class="unit">(mEq/L)</span></label>
+                                <input type="number" step="0.1" id="bicarbonate" name="bicarbonate" min="10" max="40" value="24.0" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="calcium">Serum Calcium <span class="unit">(mg/dL)</span></label>
+                                <input type="number" step="0.1" id="calcium" name="calcium" min="5.0" max="15.0" value="9.2" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="uric_acid">Uric Acid <span class="unit">(mg/dL)</span></label>
+                                <input type="number" step="0.1" id="uric_acid" name="uric_acid" min="1.0" max="15.0" value="6.5" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="btn-submit">Execute Prediction Analysis</button>
+                </form>
+            </main>
+        </div>
+
+        <!-- DASHBOARD RESULT VIEW -->
+        <div id="resultsDashboard" class="results-dashboard hidden">
+            <div class="dashboard-nav">
+                <button id="backBtn" class="btn-back">← Back to Assessment Form</button>
+            </div>
+
+            <div class="dash-row row-top">
+                <div class="dash-card card-hero" id="heroCard">
+                    <span class="pill-tag" id="pillTag">PREDICTION RESULT</span>
+                    <h1 id="heroTitle">CKD Detected</h1>
+                    <p id="heroDesc">The model indicates an elevated probability of Chronic Kidney Disease.</p>
+                </div>
+
+                <div class="dash-card card-score">
+                    <h3>KIDNEY HEALTH SCORE</h3>
+                    <div class="score-circle">
+                        <span id="healthScore">33</span>
+                    </div>
+                    <p class="score-sub" id="scoreSub">Multiple concerning indicators</p>
+                </div>
+            </div>
+
+            <div class="dash-row row-mid">
+                <div class="dash-card card-gauge">
+                    <h3>⚡ Kidney Disease Risk</h3>
+                    <div class="gauge-wrapper">
+                        <div class="gauge-body" id="gaugeBody">
+                            <div class="gauge-mask"></div>
+                        </div>
+                        <div class="gauge-center-info">
+                            <span id="gaugeProbText" class="gauge-val">67%</span>
+                            <span id="gaugeRiskTier" class="gauge-tier">High Risk</span>
+                        </div>
+                    </div>
+                    <div class="gauge-labels">
+                        <span class="lbl-low">Low</span>
+                        <span class="lbl-mod">Moderate</span>
+                        <span class="lbl-high">High</span>
+                    </div>
+                </div>
+
+                <div class="dash-card card-breakdown">
+                    <h3>📊 Probability Breakdown</h3>
+                    <div class="breakdown-item">
+                        <div class="bd-head"><span>CKD Risk</span><strong id="ckdRiskPct">67%</strong></div>
+                        <div class="bd-track"><div id="ckdRiskBar" class="bd-fill bar-risk"></div></div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="bd-head"><span>Healthy</span><strong id="healthyRiskPct">33%</strong></div>
+                        <div class="bd-track"><div id="healthyRiskBar" class="bd-fill bar-healthy"></div></div>
+                    </div>
+                    <div class="alert-banner" id="alertBanner">
+                        🔴 High Risk — Strong indicators of CKD present
+                    </div>
+                </div>
+
+                <div class="dash-card card-summary">
+                    <h3>Patient Activity</h3>
+                    <ul class="summary-list">
+                        <li><span>Risk score:</span> <strong id="sumRiskScore">67%</strong></li>
+                        <li><span>Creatinine:</span> <strong id="sumCreatinine">1.4 mg/dL</strong></li>
+                        <li><span>Blood pressure:</span> <strong id="sumBP">135/85 mmHg</strong></li>
+                        <li><span>BUN Level:</span> <strong id="sumBUN">22 mg/dL</strong></li>
+                    </ul>
+                </div>
+
+                <div class="dash-card card-steps">
+                    <h3>Recommended Next Steps</h3>
+                    <ul class="steps-list" id="stepsList">
+                        <li>Seek urgent medical consultation</li>
+                        <li>Get full renal profile and urinalysis</li>
+                        <li>Discuss nephrology referral with doctor</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dash-card card-parameters">
+                <h3>🩺 Parameter Health Analysis</h3>
+                <p class="section-sub">How your values compare to healthy clinical ranges</p>
+                <div class="param-grid" id="paramGrid"></div>
+            </div>
+
+            <div class="dash-card card-factors">
+                <h3>🧠 Key Influencing Factors</h3>
+                <p class="section-sub">Features that most influenced this prediction</p>
+                <div class="factors-list" id="factorsList"></div>
+            </div>
+
+            <div class="disclaimer-banner">
+                ⚠️ <strong>Important:</strong> This prediction is generated by a machine learning model for educational and decision support purposes. It should NOT be used as a final medical diagnosis. Always consult a qualified healthcare professional.
+            </div>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

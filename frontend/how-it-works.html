@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How It Works — CKD Predict System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="brand-icon">🩺</span>
+                <span class="brand-name">CKD Predict</span>
+                <span class="brand-badge">Practitioner Edition</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#formView">Clinical Assessment</a>
+                <a href="how-it-works.html" class="active">How It Works</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="app-container">
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-badge">System Architecture</div>
+            <h1>How It Works</h1>
+            <p>An in-depth look at the technology, models, and clinical research behind our CKD prediction system.</p>
+        </header>
+
+        <!-- Section 1: System Overview & Practitioner Mode -->
+        <section class="info-card">
+            <h2>📋 System Overview</h2>
+            <p class="card-desc">Our CKD Prediction System uses a trained <strong>Random Forest Classifier</strong> to analyze clinical biomarker data and predict the probability of Chronic Kidney Disease. The system is designed for decision support and academic research:</p>
+
+            <div class="overview-single-card">
+                <div class="mode-card highlight-card">
+                    <div class="mode-icon">👨‍⚕️</div>
+                    <h3>Healthcare Practitioner Mode</h3>
+                    <p>Full clinical interface with 14 standardized biomarker inputs organized in a streamlined single-page workflow. Provides detailed health score, biomarker status grid, and feature importance chart for in-depth analysis.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Step-by-Step Prediction Pipeline -->
+        <section class="info-card">
+            <div class="header-badge center-badge">Step by Step</div>
+            <h2 class="center-title">The Prediction Pipeline</h2>
+
+            <div class="pipeline-vertical">
+                <!-- Step 1 -->
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Data Input</h3>
+                        <p>The practitioner enters clinical biomarker values via the web form. All 14 parameters are entered directly.</p>
+                        <div class="code-callout">
+                            <strong>Parameters Include:</strong> Age, Gender, Weight, Height, BMI (auto-calculated), Systolic BP, Diastolic BP, Serum Creatinine, Blood Urea Nitrogen (BUN), Serum Albumin, Phosphorus, Serum Bicarbonate, Serum Calcium, Uric Acid.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Data Preprocessing & Scaling</h3>
+                        <p>The backend receives the 14-parameter JSON payload. Categorical variables are ordinal-encoded, missing inputs undergo KNN Imputation ($k=5$), and continuous variables are normalized using Min-Max Scaling $[0, 1]$.</p>
+                        <div class="code-callout">
+                            <strong>Encoding Examples:</strong> <code>Gender: "Male" → 1, "Female" → 0</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Feature Vector Construction</h3>
+                        <p>The 14 encoded values are assembled into a feature vector in the exact column order expected by the trained model (matching NHANES dataset ordering).</p>
+                        <div class="code-callout">
+                            <strong>Feature Order (14 features):</strong> <code>age, gender, bmi, weight_kg, height_cm, bp_systolic, bp_diastolic, serum_creatinine, blood_urea_nitrogen, albumin_serum, phosphorus, bicarbonate, calcium, uric_acid</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Random Forest Prediction</h3>
+                        <p>The feature vector is passed to the pre-trained Random Forest Classifier. The model consists of 100 decision trees trained on bootstrap samples, yielding an ensemble decision.</p>
+                        <div class="code-callout">
+                            <strong>Output:</strong> Binary classification (CKD / No CKD) + probability score from $0\%$ to $100\%$.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="step-card">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Result Visualization</h3>
+                        <p>The prediction, probability, and input data are returned to the frontend dashboard view:</p>
+                        <ul class="step-bullets">
+                            <li><strong>Risk Gauge:</strong> Semi-circle meter showing risk probability (Green $\rightarrow$ Orange $\rightarrow$ Red).</li>
+                            <li><strong>Health Score Ring:</strong> Circular score visualization ($100 - \text{Risk Percentage}$).</li>
+                            <li><strong>Parameter Health Grid:</strong> Per-biomarker assessment against clinical reference ranges.</li>
+                            <li><strong>Feature Importance Chart:</strong> Horizontal bar chart showing top decision drivers.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Technology Stack -->
+        <section class="info-card">
+            <h2>🛠️ Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-box">
+                    <h3>FastAPI + Uvicorn</h3>
+                    <span class="tech-tag">Backend</span>
+                    <p>High-performance Python web API serving model endpoints with Pydantic validation and CORS support.</p>
+                </div>
+                <div class="tech-box">
+                    <h3>scikit-learn</h3>
+                    <span class="tech-tag">Machine Learning</span>
+                    <p>Industry-standard ML library implementing RandomForestClassifier, KNNImputer, and MinMaxScaler.</p>
+                </div>
+                <div class="tech-box">
+                    <h3>Vanilla JS & CSS3</h3>
+                    <span class="tech-tag">Frontend</span>
+                    <p>Zero external frameworks — pure HTML5, CSS3 CSS Grid/Flexbox, and asynchronous Fetch API.</p>
+                </div>
+                <div class="tech-box">
+                    <h3>joblib</h3>
+                    <span class="tech-tag">Serialization</span>
+                    <p>Efficient model persistence loading pre-trained pipelines instantly into memory at startup.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Dataset Foundation -->
+        <section class="info-card">
+            <h2>📊 The NHANES Dataset</h2>
+            <p class="card-desc">The model is trained on public clinical records from the CDC National Health and Nutrition Examination Survey (NHANES):</p>
+            <div class="dataset-stats-grid">
+                <div class="stat-card">
+                    <span class="s-val">6,326</span>
+                    <span class="s-lbl">Valid Patient Records</span>
+                </div>
+                <div class="stat-card">
+                    <span class="s-val">14</span>
+                    <span class="s-lbl">Selected Biomarkers</span>
+                </div>
+                <div class="stat-card">
+                    <span class="s-val">70 / 30</span>
+                    <span class="s-lbl">Train / Test Split</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Biomarkers Reference Table -->
+        <section class="info-card">
+            <h2>🩺 The 14 Biomarkers</h2>
+            <p class="card-desc">Each patient record includes these clinical measurements:</p>
+            <table class="biomarker-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Feature</th>
+                        <th>Type</th>
+                        <th>Clinical Reference Range</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>Age</td><td>Numeric</td><td>Adults ($\ge 18$ years)</td></tr>
+                    <tr><td>2</td><td>Gender</td><td>Categorical</td><td>Male / Female</td></tr>
+                    <tr><td>3</td><td>Weight</td><td>Numeric</td><td>$30 – 250\text{ kg}$</td></tr>
+                    <tr><td>4</td><td>Height</td><td>Numeric</td><td>$100 – 220\text{ cm}$</td></tr>
+                    <tr><td>5</td><td>Body Mass Index (BMI)</td><td>Numeric</td><td>$18.5 – 24.9\text{ kg/m}^2$</td></tr>
+                    <tr><td>6</td><td>Systolic BP</td><td>Numeric</td><td>$90 – 120\text{ mmHg}$</td></tr>
+                    <tr><td>7</td><td>Diastolic BP</td><td>Numeric</td><td>$40 – 90\text{ mmHg}$</td></tr>
+                    <tr><td>8</td><td>Serum Creatinine</td><td>Numeric</td><td>$0.6 – 1.2\text{ mg/dL}$</td></tr>
+                    <tr><td>9</td><td>Blood Urea Nitrogen (BUN)</td><td>Numeric</td><td>$7.0 – 20.0\text{ mg/dL}$</td></tr>
+                    <tr><td>10</td><td>Serum Albumin</td><td>Numeric</td><td>$3.5 – 5.5\text{ g/dL}$</td></tr>
+                    <tr><td>11</td><td>Phosphorus</td><td>Numeric</td><td>$2.5 – 4.5\text{ mg/dL}$</td></tr>
+                    <tr><td>12</td><td>Serum Bicarbonate</td><td>Numeric</td><td>$22.0 – 29.0\text{ mEq/L}$</td></tr>
+                    <tr><td>13</td><td>Serum Calcium</td><td>Numeric</td><td>$8.5 – 10.2\text{ mg/dL}$</td></tr>
+                    <tr><td>14</td><td>Uric Acid</td><td>Numeric</td><td>$3.5 – 7.2\text{ mg/dL}$</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 6: Model Training Methodology -->
+        <section class="info-card">
+            <h2>🧮 Model Training Methodology</h2>
+            <div class="methodology-list">
+                <div class="meth-item">
+                    <h4>1. Data Cleaning & Imputation</h4>
+                    <p>KNN Imputer ($k=5$) handles sparse missing values based on nearest patient physiological profiles.</p>
+                </div>
+                <div class="meth-item">
+                    <h4>2. Class Balancing</h4>
+                    <p>Random minority oversampling is applied exclusively to the training set to prevent model bias towards majority healthy classes.</p>
+                </div>
+                <div class="meth-item">
+                    <h4>3. Model Evaluation Benchmark</h4>
+                    <table class="benchmark-table">
+                        <thead>
+                            <tr><th>Model</th><th>Accuracy</th><th>ROC-AUC</th><th>Key Strengths</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr class="active-row"><td>Random Forest</td><td>90.62%</td><td>0.9416</td><td>Optimal balance of accuracy, robustness, and feature interpretability.</td></tr>
+                            <tr><td>Logistic Regression</td><td>86.40%</td><td>0.9120</td><td>Fast, interpretable linear baseline.</td></tr>
+                            <tr><td>Support Vector Machine</td><td>88.15%</td><td>0.9250</td><td>Effective in non-linear decision spaces.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: Top Predictive Features -->
+        <section class="info-card">
+            <h2>📈 Top Predictive Features</h2>
+            <p class="card-desc">Features ranked by relative importance in the Random Forest model:</p>
+
+            <div class="feature-rank-list">
+                <div class="rank-card">
+                    <span class="rank-num">1</span>
+                    <div class="rank-info">
+                        <h4>Serum Creatinine (24.5%)</h4>
+                        <p>Primary biomarker of renal waste retention and glomerular filtration capacity.</p>
+                    </div>
+                </div>
+                <div class="rank-card">
+                    <span class="rank-num">2</span>
+                    <div class="rank-info">
+                        <h4>Blood Urea Nitrogen (18.2%)</h4>
+                        <p>Key indicator of nitrogenous waste accumulation in bloodstream.</p>
+                    </div>
+                </div>
+                <div class="rank-card">
+                    <span class="rank-num">3</span>
+                    <div class="rank-info">
+                        <h4>Age (14.7%)</h4>
+                        <p>Accounts for age-related structural nephron decline.</p>
+                    </div>
+                </div>
+                <div class="rank-card">
+                    <span class="rank-num">4</span>
+                    <div class="rank-info">
+                        <h4>Serum Albumin (11.3%)</h4>
+                        <p>Reflects glomerular membrane integrity and proteinuria.</p>
+                    </div>
+                </div>
+                <div class="rank-card">
+                    <span class="rank-num">5</span>
+                    <div class="rank-info">
+                        <h4>Systolic Blood Pressure (9.4%)</h4>
+                        <p>Critical metric for hypertensive renal vascular damage.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8: Responsible Technology & Ethics -->
+        <section class="info-card">
+            <h2>🛡️ Responsible Technology in Healthcare</h2>
+            <div class="ethics-grid">
+                <div class="eth-box">
+                    <h4>🔒 Zero Permanent Patient Storage</h4>
+                    <p>Inference inputs are processed in-memory and discarded immediately after prediction output.</p>
+                </div>
+                <div class="eth-box">
+                    <h4>⚡ Session-Based Processing</h4>
+                    <p>No medical tracking cookies or third-party analytical pixels attached to patient queries.</p>
+                </div>
+                <div class="eth-box">
+                    <h4>⚖️ Race-Free Screening</h4>
+                    <p>Aligns with ASN-NKF guidelines by excluding demographic ethnicity adjustments.</p>
+                </div>
+                <div class="eth-box">
+                    <h4>🤝 Practitioner Decision Support</h4>
+                    <p>Designed strictly as an analytical aid to assist clinicians, not replace them.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <div class="cta-banner">
+            <h3>Ready to Execute Clinical Screening?</h3>
+            <p>Launch the practitioner panel to test patient profiles with the machine learning engine.</p>
+            <a href="index.html#formView" class="btn-primary-gradient" style="text-decoration: none; display: inline-block; margin-top: 1rem;">Start Assessment →</a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>CKD Prediction System — Healthcare Practitioner Decision Support</p>
+            <p class="footer-sub">Dataset: NHANES 2021–2023 | Model: Random Forest | Framework: FastAPI & Vanilla JS</p>
+            <p class="footer-ver">v1.0</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
