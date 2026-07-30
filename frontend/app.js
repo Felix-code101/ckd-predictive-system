@@ -1,4 +1,4 @@
-const API_URL = "https://ckd-predictive-system.onrender.com";
+const API_URL = "https://ckd-predictive-system.onrender.com/predict";
 
 const REFERENCE_RANGES = {
     bp_systolic: { name: "Systolic Blood Pressure", min: 90, max: 120, unit: "mmHg" },
