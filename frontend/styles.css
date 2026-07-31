@@ -140,7 +140,7 @@ body {
 }
 
 .btn-primary-gradient {
-    background: black;
+    background: var(--primary-gradient);
     color: white;
     text-decoration: none;
     padding: 0.75rem 1.6rem;
@@ -326,6 +326,7 @@ body {
 .factor-fill { height: 100%; background: #3b82f6; border-radius: 9999px; }
 .factor-val { width: 45px; font-weight: 700; color: #64748b; }
 .disclaimer-banner { background: #fefce8; border: 1px solid #fef08a; color: #854d0e; padding: 0.85rem 1rem; border-radius: 10px; font-size: 0.8rem; margin-top: 1.25rem; }
+
 /* How It Works Specific Layout Styles */
 .center-title { text-align: center; margin-bottom: 0.5rem; }
 .center-badge { display: table; margin: 0 auto 0.5rem auto; }
@@ -482,3 +483,82 @@ body {
 
 .cta-banner h3 { font-size: 1.5rem; font-weight: 800; color: var(--text-heading); }
 .cta-banner p { color: var(--text-muted); font-size: 0.95rem; }
+
+/* ==========================================================================
+   MOBILE & RESPONSIVE NAV FIXES (Width <= 768px)
+   ========================================================================== */
+
+.nav-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.hamburger, .hamburger::before, .hamburger::after {
+    display: block;
+    background: var(--text-heading);
+    height: 3px;
+    width: 24px;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.hamburger::before, .hamburger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+}
+
+.hamburger::before { transform: translateY(-7px); }
+.hamburger::after { transform: translateY(7px); }
+
+@media (max-width: 768px) {
+    .brand-badge {
+        display: none; /* Hide badge on mobile to keep navbar clean */
+    }
+
+    .nav-toggle {
+        display: block; /* Show hamburger button on mobile */
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #ffffff;
+        flex-direction: column;
+        padding: 1rem 1.5rem;
+        gap: 1rem;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        display: none; /* Hidden by default on mobile */
+    }
+
+    .nav-links.nav-open {
+        display: flex; /* Shown when toggled open */
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .demo-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .demo-buttons {
+        flex-direction: column;
+    }
+
+    .factor-name {
+        width: 100px;
+        font-size: 0.75rem;
+    }
+}
