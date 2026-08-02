@@ -16,9 +16,15 @@
                 <span class="brand-name">CKD Predict</span>
                 <span class="brand-badge">Healthcare Practitioner Edition</span>
             </div>
-            <div class="nav-links">
-                <a href="#hero" class="active">Home</a>
 
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">
+                <span class="hamburger"></span>
+            </button>
+
+            <div class="nav-links" id="navLinks">
+                <a href="index.html" class="active">Home</a>
+                <a href="#" id="navAssessmentLink">Clinical Assessment</a>
+                <a href="how-it-works.html">How It Works</a>
             </div>
         </div>
     </nav>
@@ -31,7 +37,7 @@
 
             <!-- Hero Section -->
             <section id="hero" class="hero-section">
-                <div class="hero-badge"> Clinical AI Decision Support · Random Forest Model</div>
+                <div class="hero-badge">Clinical AI Decision Support · Random Forest Model</div>
                 <h1 class="hero-title">Chronic Kidney Disease <span class="text-gradient">Predictive System</span></h1>
                 <p class="hero-subtitle">Machine learning risk screening using 14 key clinical biomarkers. Trained on standardized NHANES health data to assist healthcare practitioners in early renal risk stratification.</p>
 
@@ -60,7 +66,7 @@
             <!-- Quick Demo Row -->
             <section class="demo-section">
                 <div class="demo-card">
-                    <span class="demo-title"> Quick Case Demo - Pre-fill Test Profiles</span>
+                    <span class="demo-title">Quick Case Demo - Pre-fill Test Profiles</span>
                     <div class="demo-buttons">
                         <button id="demoCkdBtn" class="btn-demo-ckd">Demo: High Risk Patient</button>
                         <button id="demoHealthyBtn" class="btn-demo-healthy">Demo: Healthy Patient</button>
@@ -99,7 +105,7 @@
             </header>
 
             <main class="form-card">
-                <form id="ckdForm">
+                <form id="ckdForm" onsubmit="return false;">
                     <!-- Section 1: Demographics -->
                     <div class="form-section">
                         <div class="section-title">
@@ -301,7 +307,7 @@
 
     </div>
 
-    <!-- Update line at the bottom of index.html -->
-<script src="app.js?v=2.0"></script>
+    <!-- Script tag with cache-busting version parameter -->
+    <script src="app.js?v=3.0"></script>
 </body>
 </html>
