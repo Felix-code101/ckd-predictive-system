@@ -24,6 +24,15 @@ const FEATURE_IMPORTANCES = [
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Nav Toggle for Mobile
+    const navToggle = document.getElementById("navToggle");
+    const navLinks = document.getElementById("navLinks");
+    if (navToggle && navLinks) {
+        navToggle.addEventListener("click", () => {
+            navLinks.classList.toggle("nav-open");
+        });
+    }
+
     const landingView = document.getElementById("landingView");
     const formView = document.getElementById("formView");
     const resultsDashboard = document.getElementById("resultsDashboard");
@@ -40,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
             bmiInput.value = (w / (h * h)).toFixed(1);
         }
     }
+
     if (weightInput && heightInput) {
         weightInput.addEventListener("input", calculateBMI);
         heightInput.addEventListener("input", calculateBMI);
@@ -56,6 +66,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const startBtn = document.getElementById("startAssessmentBtn");
     if (startBtn) startBtn.addEventListener("click", openAssessmentForm);
+
+    const navAssessmentLink = document.getElementById("navAssessmentLink");
+    if (navAssessmentLink) {
+        navAssessmentLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            openAssessmentForm();
+        });
+    }
 
     const backToLanding = document.getElementById("backToLandingBtn");
     if (backToLanding) {
@@ -117,65 +135,65 @@ document.addEventListener("DOMContentLoaded", () => {
         calculateBMI();
     }
 
-// FORM SUBMIT HANDLER
-const ckdForm = document.getElementById("ckdForm");
-if (ckdForm) {
-    ckdForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
+    // FORM SUBMIT HANDLER WITH ANIMATED SPINNER
+    const ckdForm = document.getElementById("ckdForm");
+    if (ckdForm) {
+        ckdForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
 
-        const submitBtn = document.getElementById("submitBtn");
+            const submitBtn = document.getElementById("submitBtn");
 
-        // 1. Activate Visual Loading Feedback
-        submitBtn.classList.add("loading");
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = `
-            <span class="spinner"></span>
-            <span>Analyzing Clinical Data...</span>
-        `;
+            // Activate button loading state
+            submitBtn.classList.add("loading");
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <span class="spinner"></span>
+                <span>Executing Model Inference...</span>
+            `;
 
-        const payload = {
-            age: parseFloat(document.getElementById("age").value),
-            gender: document.getElementById("gender").value,
-            bmi: parseFloat(document.getElementById("bmi").value),
-            weight_kg: parseFloat(document.getElementById("weight_kg").value),
-            height_cm: parseFloat(document.getElementById("height_cm").value),
-            bp_systolic: parseFloat(document.getElementById("bp_systolic").value),
-            bp_diastolic: parseFloat(document.getElementById("bp_diastolic").value),
-            serum_creatinine: parseFloat(document.getElementById("serum_creatinine").value),
-            blood_urea_nitrogen: parseFloat(document.getElementById("blood_urea_nitrogen").value),
-            albumin_serum: parseFloat(document.getElementById("albumin_serum").value),
-            phosphorus: parseFloat(document.getElementById("phosphorus").value),
-            bicarbonate: parseFloat(document.getElementById("bicarbonate").value),
-            calcium: parseFloat(document.getElementById("calcium").value),
-            uric_acid: parseFloat(document.getElementById("uric_acid").value)
-        };
+            const payload = {
+                age: parseFloat(document.getElementById("age").value),
+                gender: document.getElementById("gender").value,
+                bmi: parseFloat(document.getElementById("bmi").value),
+                weight_kg: parseFloat(document.getElementById("weight_kg").value),
+                height_cm: parseFloat(document.getElementById("height_cm").value),
+                bp_systolic: parseFloat(document.getElementById("bp_systolic").value),
+                bp_diastolic: parseFloat(document.getElementById("bp_diastolic").value),
+                serum_creatinine: parseFloat(document.getElementById("serum_creatinine").value),
+                blood_urea_nitrogen: parseFloat(document.getElementById("blood_urea_nitrogen").value),
+                albumin_serum: parseFloat(document.getElementById("albumin_serum").value),
+                phosphorus: parseFloat(document.getElementById("phosphorus").value),
+                bicarbonate: parseFloat(document.getElementById("bicarbonate").value),
+                calcium: parseFloat(document.getElementById("calcium").value),
+                uric_acid: parseFloat(document.getElementById("uric_acid").value)
+            };
 
-        try {
-            const res = await fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
+            try {
+                const res = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
 
-            if (!res.ok) throw new Error(`HTTP Error Status: ${res.status}`);
-            const data = await res.json();
+                if (!res.ok) throw new Error(`HTTP Error Status: ${res.status}`);
+                const data = await res.json();
 
-            renderDashboard(data, payload);
+                renderDashboard(data, payload);
 
-            formView.classList.add("hidden");
-            resultsDashboard.classList.remove("hidden");
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        } catch (err) {
-            console.error("Fetch Error:", err);
-            alert("Connection Error: Render service waking up or unreachable. Please try again in a few seconds.");
-        } finally {
-            // 2. Reset Button State
-            submitBtn.classList.remove("loading");
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = "Execute Prediction Analysis";
-        }
-    });
-}
+                formView.classList.add("hidden");
+                resultsDashboard.classList.remove("hidden");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            } catch (err) {
+                console.error("Fetch Error:", err);
+                alert("Connection Delay: Render backend is waking up from idle state. Please try again in 10 seconds.");
+            } finally {
+                // Restore button state
+                submitBtn.classList.remove("loading");
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = "<span>Execute Prediction Analysis</span>";
+            }
+        });
+    }
 
     function renderDashboard(data, inputs) {
         const ckdProb = Math.round(data.probability_score * 100);
@@ -189,17 +207,43 @@ if (ckdForm) {
 
         if (isCKD) {
             heroCard.className = "dash-card card-hero hero-detected";
-            pillTag.innerText = "PREDICTION RESULT";
+            pillTag.innerText = "EVALUATION RESULT";
             heroTitle.innerText = "CKD Detected";
-            heroDesc.innerText = "Elevated risk of Chronic Kidney Disease detected. Clinical evaluation recommended.";
+            heroDesc.innerText = "The model indicates an elevated probability of Chronic Kidney Disease. Clinical evaluation recommended.";
         } else {
             heroCard.className = "dash-card card-hero hero-healthy";
-            pillTag.innerText = "PREDICTION RESULT";
+            pillTag.innerText = "EVALUATION RESULT";
             heroTitle.innerText = "No CKD Detected";
-            heroDesc.innerText = "Low probability of Chronic Kidney Disease detected. Continue routine clinical monitoring.";
+            heroDesc.innerText = "The model indicates a low probability of Chronic Kidney Disease. Continue routine clinical monitoring.";
         }
 
+        const scoreCircle = document.querySelector(".score-circle");
+        const scoreSub = document.getElementById("scoreSub");
         document.getElementById("healthScore").innerText = healthyProb;
+
+        if (healthyProb >= 80) {
+            scoreCircle.style.borderColor = "#15803d";
+            scoreSub.innerText = "Optimal renal health indicators";
+            scoreSub.style.color = "#15803d";
+        } else if (healthyProb >= 50) {
+            scoreCircle.style.borderColor = "#d97706";
+            scoreSub.innerText = "Moderate renal health indicators";
+            scoreSub.style.color = "#d97706";
+        } else {
+            scoreCircle.style.borderColor = "#be123c";
+            scoreSub.innerText = "Multiple concerning indicators";
+            scoreSub.style.color = "#be123c";
+        }
+
+        const gaugeBody = document.getElementById("gaugeBody");
+        const fillDegrees = (ckdProb / 100) * 180;
+
+        let fillColor = "#15803d";
+        if (ckdProb >= 70) fillColor = "#be123c";
+        else if (ckdProb >= 35) fillColor = "#d97706";
+
+        gaugeBody.style.background = `conic-gradient(from 270deg at 50% 50%, ${fillColor} 0deg ${fillDegrees}deg, #e2e8f0 ${fillDegrees}deg 180deg, transparent 180deg 360deg)`;
+
         document.getElementById("gaugeProbText").innerText = `${ckdProb}%`;
         document.getElementById("gaugeRiskTier").innerText = data.risk_tier;
 
@@ -208,9 +252,93 @@ if (ckdForm) {
         document.getElementById("ckdRiskBar").style.width = `${ckdProb}%`;
         document.getElementById("healthyRiskBar").style.width = `${healthyProb}%`;
 
+        const alertBanner = document.getElementById("alertBanner");
+        if (data.risk_tier === "High Risk") {
+            alertBanner.className = "alert-banner banner-high";
+            alertBanner.innerText = "High Risk — Strong indicators of CKD present";
+        } else if (data.risk_tier === "Moderate Risk") {
+            alertBanner.className = "alert-banner banner-mod";
+            alertBanner.innerText = "Moderate Risk — Elevated clinical indicators";
+        } else {
+            alertBanner.className = "alert-banner banner-low";
+            alertBanner.innerText = "Low Risk — Indicators within normal ranges";
+        }
+
         document.getElementById("sumRiskScore").innerText = `${ckdProb}%`;
         document.getElementById("sumCreatinine").innerText = `${inputs.serum_creatinine} mg/dL`;
         document.getElementById("sumBP").innerText = `${inputs.bp_systolic}/${inputs.bp_diastolic} mmHg`;
         document.getElementById("sumBUN").innerText = `${inputs.blood_urea_nitrogen} mg/dL`;
+
+        const stepsList = document.getElementById("stepsList");
+        if (data.risk_tier === "High Risk") {
+            stepsList.innerHTML = `
+                <li>Order diagnostic renal imaging and full panel</li>
+                <li>Schedule urgent nephrology consultation</li>
+                <li>Evaluate medication dosage and nephrotoxicity</li>
+            `;
+        } else if (data.risk_tier === "Moderate Risk") {
+            stepsList.innerHTML = `
+                <li>Schedule follow-up renal panel in 3–6 months</li>
+                <li>Optimize hypertension and diabetes interventions</li>
+                <li>Advise lifestyle and dietary modification</li>
+            `;
+        } else {
+            stepsList.innerHTML = `
+                <li>Maintain annual health and laboratory screening</li>
+                <li>Re-evaluate upon development of clinical symptoms</li>
+                <li>Maintain standard lifestyle recommendations</li>
+            `;
+        }
+
+        const paramGrid = document.getElementById("paramGrid");
+        paramGrid.innerHTML = "";
+
+        Object.keys(REFERENCE_RANGES).forEach((key) => {
+            const ref = REFERENCE_RANGES[key];
+            const val = inputs[key];
+            let status = "GOOD";
+            let statusClass = "good";
+            let icon = "✓";
+
+            if (val < ref.min || val > ref.max) {
+                if (key === "serum_creatinine" || key === "bp_systolic" || key === "blood_urea_nitrogen") {
+                    status = "POOR";
+                    statusClass = "poor";
+                    icon = "✕";
+                } else {
+                    status = "MODERATE";
+                    statusClass = "mod";
+                    icon = "!";
+                }
+            }
+
+            paramGrid.innerHTML += `
+                <div class="param-card">
+                    <div class="param-left">
+                        <div class="param-icon icon-${statusClass}">${icon}</div>
+                        <div>
+                            <div class="param-title">${ref.name}</div>
+                            <div class="param-sub">Value: ${val} · Normal: ${ref.min}–${ref.max}</div>
+                        </div>
+                    </div>
+                    <span class="param-badge badge-${statusClass}">${status}</span>
+                </div>
+            `;
+        });
+
+        const factorsList = document.getElementById("factorsList");
+        factorsList.innerHTML = "";
+
+        FEATURE_IMPORTANCES.forEach((item) => {
+            factorsList.innerHTML += `
+                <div class="factor-row">
+                    <span class="factor-name">${item.name}</span>
+                    <div class="factor-track">
+                        <div class="factor-fill" style="width: ${item.weight * 3.5}%;"></div>
+                    </div>
+                    <span class="factor-val">${item.weight}%</span>
+                </div>
+            `;
+        });
     }
 });
